@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from typing import TYPE_CHECKING
 
 from homeassistant.components.sensor import SensorEntity
@@ -25,12 +26,15 @@ async def async_setup_entry(
     coordinator: ParentSquareCoordinator = hass.data[DOMAIN][entry.entry_id][
         "coordinator"
     ]
-    async_add_entities(
-        [
-            ParentSquareUnreadSensor(coordinator, entry),
-            ParentSquareLatestSensor(coordinator, entry),
-        ]
+    entities = [
+        ParentSquareUnreadSensor(coordinator, entry),
+        ParentSquareLatestSensor(coordinator, entry),
+    ]
+    entities.extend(
+        ParentSquareChildUnreadSensor(coordinator, entry, rule.child_id)
+        for rule in coordinator.child_rules
     )
+    async_add_entities(entities)
 
 
 class ParentSquareBaseSensor(
@@ -115,3 +119,31 @@ class ParentSquareLatestSensor(ParentSquareBaseSensor):
             "child_id": latest.child_id,
             "is_read": latest.is_read,
         }
+
+
+
+class ParentSquareChildUnreadSensor(ParentSquareBaseSensor):
+    """Count unread notifications explicitly matched to one child."""
+
+    _attr_icon = "mdi:account-school"
+
+    def __init__(
+        self,
+        coordinator: ParentSquareCoordinator,
+        entry: ConfigEntry,
+        child_id: str,
+    ) -> None:
+        """Initialize the child-specific sensor."""
+        super().__init__(coordinator, entry)
+        self._child_id = child_id
+        slug = re.sub(r"[^a-z0-9]+", "_", child_id.casefold()).strip("_")
+        self._attr_unique_id = f"{entry.entry_id}_child_{slug}_unread"
+        self._attr_name = f"{child_id} unread notifications"
+
+    @property
+    def native_value(self) -> int:
+        """Return the unread count assigned unambiguously to this child."""
+        return sum(
+            record.child_id == self._child_id and record.is_read is False
+            for record in self.coordinator.data or ()
+        )
