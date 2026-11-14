@@ -10,13 +10,13 @@ from homeassistant.helpers.config_entry_oauth2_flow import (
     LocalOAuth2ImplementationWithPkce,
 )
 
-from .const import DOMAIN
-
 AUTHORIZE_URL = (
     "https://login.microsoftonline.com/consumers/oauth2/v2.0/authorize"
 )
 TOKEN_URL = "https://login.microsoftonline.com/consumers/oauth2/v2.0/token"
-APP_REGISTRATION_URL = "https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade"
+APP_REGISTRATION_URL = (
+    "https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade"
+)
 
 
 async def async_get_authorization_server(
