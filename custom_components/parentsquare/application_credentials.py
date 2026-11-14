@@ -8,6 +8,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.config_entry_oauth2_flow import (
     AbstractOAuth2Implementation,
     LocalOAuth2ImplementationWithPkce,
+    async_get_redirect_uri,
 )
 
 AUTHORIZE_URL = (
@@ -50,4 +51,7 @@ async def async_get_description_placeholders(
     hass: HomeAssistant,
 ) -> dict[str, str]:
     """Return the Microsoft app registration link."""
-    return {"console_url": APP_REGISTRATION_URL}
+    return {
+        "console_url": APP_REGISTRATION_URL,
+        "redirect_uri": async_get_redirect_uri(hass),
+    }
