@@ -1,6 +1,7 @@
 """Tests for provider-neutral ParentSquare processing."""
 
 import asyncio
+from collections.abc import AsyncIterator
 from datetime import datetime, timedelta, timezone
 
 from custom_components.parentsquare.classifier import (
@@ -9,12 +10,12 @@ from custom_components.parentsquare.classifier import (
     match_child,
     sender_matches_domains,
 )
-from custom_components.parentsquare.processing import async_process_message
 from custom_components.parentsquare.models import (
     ChildMatchRule,
     EmailMessageMetadata,
     NotificationRecord,
 )
+from custom_components.parentsquare.processing import async_process_message
 from custom_components.parentsquare.retention import prune_notifications
 
 
@@ -107,9 +108,10 @@ class FakeSource:
     async def async_list_folders(self) -> list[tuple[str, str]]:
         return [("folder", "ParentSquare")]
 
-    async def async_get_messages(self, folder_id: str, *, privacy_mode: str):
-        if False:
-            yield metadata()
+    async def async_get_messages(
+        self, folder_id: str, *, privacy_mode: str
+    ) -> AsyncIterator[EmailMessageMetadata]:
+        yield metadata()
 
     async def async_get_text_body(self, message_id: str) -> str:
         self.body_fetches += 1
