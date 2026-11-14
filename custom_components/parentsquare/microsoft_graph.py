@@ -108,7 +108,7 @@ class MicrosoftGraphEmailSource:
             if received_at.tzinfo is None:
                 received_at = received_at.replace(tzinfo=UTC)
         else:
-            received_at = datetime.now(timezone.utc)
+            received_at = datetime.now(UTC)
 
         return EmailMessageMetadata(
             provider_id="microsoft",
