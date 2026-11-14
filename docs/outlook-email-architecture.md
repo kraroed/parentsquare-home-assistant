@@ -85,3 +85,17 @@ This document describes the planned Microsoft Graph adapter. The repository does
 
 A configured sender-domain allow-list is a filtering mechanism only. It is not, by itself, proof of sender authenticity.
 
+## Microsoft Graph adapter implementation
+
+The repository now includes `custom_components/parentsquare/microsoft_graph.py`, a read-only adapter that:
+
+- Lists root-level Outlook folders using `GET /me/mailFolders`.
+- Reads selected-folder messages using `GET /me/mailFolders/{id}/messages`.
+- Uses an explicit `$select` list for message metadata; it does not request `body` or `bodyPreview`.
+- Follows Graph pagination for a bounded number of pages.
+- Fetches `body` only through a separate method intended for explicit short-summary mode.
+- Uses the Home Assistant OAuth session's token-refresh helper before each request.
+- Contains no send, move, delete, or mark-as-read operations.
+
+The adapter's synthetic tests verify the metadata query excludes body/preview fields and that body retrieval is a separate explicit request. Root-folder listing does not yet recurse into nested folders. OAuth flow, folder-selection UI, polling coordinator, entities, and live Microsoft account testing remain future work.
+
