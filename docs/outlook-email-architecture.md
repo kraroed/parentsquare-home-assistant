@@ -78,3 +78,10 @@ Use synthetic .eml or normalized Graph message fixtures only. Include tests for:
 - Pagination, throttling, token expiry, and invalid delta tokens.
 - No message mutation (read flag, move, delete, send).
 - No sensitive fixture data in logs.
+
+## Implementation status
+
+This document describes the planned Microsoft Graph adapter. The repository does not yet implement Microsoft OAuth, Graph requests, folder discovery, polling, or live mailbox access. The provider-neutral processing layer is in place; Microsoft Graph is the next provider milestone.
+
+A configured sender-domain allow-list is a filtering mechanism only. It is not, by itself, proof of sender authenticity.
+
