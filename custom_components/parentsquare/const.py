@@ -24,3 +24,12 @@ DEFAULT_RETENTION_DAYS = 30
 DEFAULT_MAX_NOTIFICATIONS = 250
 SUMMARY_MAX_LENGTH = 280
 BODY_MAX_LENGTH = 8000
+
+
+def scopes_for_privacy_mode(privacy_mode: str) -> tuple[str, ...]:
+    """Return the narrowest Microsoft Graph delegated scopes for a mode."""
+    if privacy_mode == PRIVACY_METADATA:
+        return ("offline_access", "https://graph.microsoft.com/Mail.ReadBasic")
+    if privacy_mode == PRIVACY_SUMMARY:
+        return ("offline_access", "https://graph.microsoft.com/Mail.Read")
+    raise ValueError(f"Unsupported privacy mode: {privacy_mode}")
