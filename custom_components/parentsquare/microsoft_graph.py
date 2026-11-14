@@ -11,7 +11,7 @@ from .models import EmailMessageMetadata, PrivacyMode
 
 GRAPH_ROOT = "https://graph.microsoft.com/v1.0"
 MESSAGE_FIELDS = (
-    "id,subject,from,receivedDateTime,isRead,internetMessageId,parentFolderId"
+    "id,subject,from,receivedDateTime,isRead,internetMessageId"
 )
 PAGE_SIZE = 50
 MAX_PAGES = 2
