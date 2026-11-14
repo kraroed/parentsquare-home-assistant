@@ -24,9 +24,10 @@
     "step": {
       "init": {
         "title": "Choose Outlook folder",
-        "description": "Select the folder where your Outlook rule delivers ParentSquare notifications. This is an application-level filter; it does not narrow Microsoft's OAuth permission.",
+        "description": "Select the folder where your Outlook rule delivers ParentSquare notifications. This is an application-level filter; it does not narrow Microsoft's OAuth permission. Configure the sender domains used to filter incoming messages; this is a filtering rule, not sender authentication.",
         "data": {
-          "folder_id": "Folder to monitor"
+          "folder_id": "Folder to monitor",
+          "sender_domains": "Allowed sender domains (comma-separated)"
         }
       }
     },
