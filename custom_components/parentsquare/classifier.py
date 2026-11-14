@@ -43,7 +43,11 @@ def match_child(
         for rule in rules
         if rule.child_id
         and rule.terms
-        and any(term.strip().casefold() in haystack for term in rule.terms if term.strip())
+        and any(
+            term.strip().casefold() in haystack
+            for term in rule.terms
+            if term.strip()
+        )
     }
     return next(iter(matched_ids)) if len(matched_ids) == 1 else None
 
