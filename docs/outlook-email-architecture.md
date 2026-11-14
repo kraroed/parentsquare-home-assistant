@@ -10,9 +10,9 @@ The app registration must support personal Microsoft accounts. Do not use a tena
 
 ## Authentication
 
-Use delegated OAuth authorization-code authentication with PKCE. This is a user-present flow; do not use username/password authentication, resource-owner-password credentials, client credentials, or a client secret. Never ask the user for their Microsoft password or MFA code in Home Assistant.
+Use Home Assistant's Application Credentials and OAuth2 config-flow helpers. The implementation must use a user-present authorization-code flow and must never use username/password authentication, resource-owner-password credentials, or client credentials. Never ask the user for their Microsoft password or MFA code in Home Assistant.
 
-The integration must not ship an unverified redirect URI assumption. Before implementing the final OAuth flow, verify the supported Home Assistant external URL / callback handling and the corresponding Microsoft app-registration platform type. Document the exact redirect URI and app registration steps for the final implementation.
+The app registration's platform type and redirect URI must match Home Assistant's callback behavior. Prefer the Home Assistant My redirect callback when available; verify the exact redirect URI against current Home Assistant and Microsoft requirements before publishing setup instructions. If a confidential web-client registration is required, the user-created client secret must be stored only in Home Assistant Application Credentials. Do not commit or log it.
 
 ## Graph permissions
 
