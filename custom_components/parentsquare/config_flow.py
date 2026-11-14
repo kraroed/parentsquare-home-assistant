@@ -142,7 +142,7 @@ class ParentSquareOptionsFlow(config_entries.OptionsFlow):
                 data={
                     CONF_FOLDER_ID: user_input[CONF_FOLDER_ID],
                     CONF_SENDER_DOMAINS: user_input[CONF_SENDER_DOMAINS],
-                    CONF_CHILD_RULES: user_input[CONF_CHILD_RULES],
+                    CONF_CHILD_RULES: user_input.get(CONF_CHILD_RULES, ""),
                 },
             )
 
