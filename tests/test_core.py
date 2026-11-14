@@ -2,12 +2,15 @@
 
 from datetime import datetime, timedelta, timezone
 
+import pytest
+
 from custom_components.parentsquare.classifier import (
     build_notification,
     make_short_summary,
     match_child,
     sender_matches_domains,
 )
+from custom_components.parentsquare.processing import async_process_message
 from custom_components.parentsquare.models import (
     ChildMatchRule,
     EmailMessageMetadata,
@@ -90,3 +93,68 @@ def test_retention_prunes_old_and_caps_newest() -> None:
     ]
     kept = prune_notifications(records, now=now, retention_days=3, max_records=2)
     assert [record.message_id for record in kept] == ["0", "1"]
+
+
+
+class FakeSource:
+    """Minimal provider fixture that records body access."""
+
+    provider_id = "fixture"
+
+    def __init__(self, body: str = "A synthetic body sentence.") -> None:
+        self.body = body
+        self.body_fetches = 0
+
+    async def async_list_folders(self) -> list[tuple[str, str]]:
+        return [("folder", "ParentSquare")]
+
+    async def async_get_messages(self, folder_id: str, *, privacy_mode: str):
+        if False:
+            yield metadata()
+
+    async def async_get_text_body(self, message_id: str) -> str:
+        self.body_fetches += 1
+        return self.body
+
+
+@pytest.mark.asyncio
+async def test_metadata_mode_never_fetches_message_body() -> None:
+    source = FakeSource()
+    record = await async_process_message(
+        source,
+        metadata(),
+        privacy_mode="metadata",
+        sender_domains=["parentsquare.com"],
+    )
+    assert record is not None
+    assert record.summary == "Reminder for Field Trip"
+    assert source.body_fetches == 0
+
+
+@pytest.mark.asyncio
+async def test_summary_mode_fetches_body_but_does_not_retain_it() -> None:
+    source = FakeSource("The school concert begins at 6 PM. Please arrive early.")
+    record = await async_process_message(
+        source,
+        metadata(),
+        privacy_mode="summary",
+        sender_domains=["parentsquare.com"],
+    )
+    assert record is not None
+    assert record.summary == "The school concert begins at 6 PM."
+    assert source.body_fetches == 1
+    assert "school concert" not in repr(record.__dict__) if hasattr(record, "__dict__") else True
+    assert not hasattr(record, "body")
+
+
+@pytest.mark.asyncio
+async def test_unapproved_sender_is_ignored_without_body_fetch() -> None:
+    source = FakeSource()
+    record = await async_process_message(
+        source,
+        metadata(sender_address="someone@example.test"),
+        privacy_mode="summary",
+        sender_domains=["parentsquare.com"],
+    )
+    assert record is None
+    assert source.body_fetches == 0
