@@ -91,3 +91,8 @@ This is a development foundation, not a finished Home Assistant integration. The
 
 The configured sender-domain list is a classification/filtering rule, not proof that an email was cryptographically sent by ParentSquare. Do not treat a matching sender address alone as authentication. Provider-side message authenticity signals may be evaluated separately where safely available.
 
+
+
+## Current Microsoft milestone
+
+The repository now includes a working code path for Home Assistant OAuth/PKCE setup, selected Microsoft Graph permissions, Outlook folder selection, configurable sender-domain filtering, optional explicit child matching, periodic polling, bounded local persistence, and unread/latest/per-child sensors. This milestone is implemented against synthetic fixtures and current Home Assistant OAuth patterns. It is not yet live-account validated, and the other provider adapters remain planned.
