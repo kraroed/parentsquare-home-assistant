@@ -35,7 +35,7 @@ The folder filter is an application behavior, not a Microsoft-enforced permissio
 4. Select the folder and choose metadata-only or optional email-preview mode.
 5. Verify message classification using real notifications before enabling automations.
 
-Authentication will use a public-client OAuth authorization-code flow with PKCE where supported. No Microsoft account password or client secret will be stored by the integration. The final redirect and app-registration requirements will be documented before live authentication is enabled.
+Authentication will use Home Assistant's OAuth2 and Application Credentials support with a user-present authorization-code flow. The integration will never request your Microsoft account password or MFA code. If Microsoft requires a client secret for the selected redirect/client type, it will be stored through Home Assistant Application Credentials, never in repository files or logs. The exact redirect and app-registration requirements will be verified before live authentication is enabled.
 
 ## Privacy and security goals
 
