@@ -15,7 +15,8 @@ AUTHORIZE_URL = (
 )
 TOKEN_URL = "https://login.microsoftonline.com/consumers/oauth2/v2.0/token"
 APP_REGISTRATION_URL = (
-    "https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade"
+    "https://entra.microsoft.com/#view/"
+    "Microsoft_AAD_RegisteredApps/ApplicationsListBlade"
 )
 
 
