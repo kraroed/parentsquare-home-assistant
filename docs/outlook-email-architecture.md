@@ -108,3 +108,19 @@ The config flow asks for the privacy mode before redirecting to Microsoft. Metad
 The integration supports one Microsoft mailbox entry. After linking, open the integration's options to select the Outlook folder that receives ParentSquare notification emails. The selected folder is a query filter, not a Microsoft permission boundary.
 
 Before publishing installation instructions, the OAuth callback and app-registration platform settings must be verified end-to-end with a real consumer Microsoft account. The current implementation has not yet passed that live test.
+
+
+## Polling and sensor implementation
+
+The initial coordinator now polls the selected folder on a five-minute interval, reads a bounded recent message window, deduplicates by provider ID plus Internet Message ID (or Graph message ID), refreshes read/unread state for tracked messages, and persists only normalized metadata plus the configured short summary. Storage is bounded to 30 days and 250 records. Original email bodies are not stored.
+
+The options flow allows the user to configure:
+- The Outlook folder to monitor.
+- A comma-separated sender-domain allow-list (default: `parentsquare.com`).
+- Explicit child matching rules, one per line in the form `Child label: keyword1, keyword2`.
+
+A sender-domain match is a filter, not cryptographic sender authentication. Child matching is intentionally conservative: a notification is assigned only when exactly one configured child rule matches. In metadata-only mode, matching uses the subject; in short-summary mode, it can also use the locally extracted summary. Ambiguous messages remain unassigned.
+
+The initial sensors expose the unread count in the retained recent window, the latest notification subject and summary attributes, and one unread counter for each configured child rule. The unread count is not a provider-wide unread total; it is limited to messages tracked in the bounded recent window.
+
+This code has passed synthetic tests and static linting, but still needs full Home Assistant runtime validation and a live personal Microsoft account test before release.
