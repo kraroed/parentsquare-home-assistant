@@ -34,10 +34,15 @@ def sender_matches_domains(sender_address: str, domains: Iterable[str]) -> bool:
 
 
 def match_child(
-    metadata: EmailMessageMetadata, rules: Sequence[ChildMatchRule]
+    metadata: EmailMessageMetadata,
+    rules: Sequence[ChildMatchRule],
+    *,
+    additional_text: str = "",
 ) -> str | None:
     """Return a child ID only when exactly one configured rule matches."""
-    haystack = f"{metadata.subject} {metadata.sender_address}".casefold()
+    haystack = (
+        f"{metadata.subject} {metadata.sender_address} {additional_text}"
+    ).casefold()
     matched_ids = {
         rule.child_id
         for rule in rules
