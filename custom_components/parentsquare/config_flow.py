@@ -15,6 +15,8 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from .const import (
     CONF_FOLDER_ID,
     CONF_PRIVACY_MODE,
+    CONF_SENDER_DOMAINS,
+    DEFAULT_SENDER_DOMAINS,
     DOMAIN,
     PRIVACY_METADATA,
     PRIVACY_SUMMARY,
@@ -136,7 +138,10 @@ class ParentSquareOptionsFlow(config_entries.OptionsFlow):
         if user_input is not None:
             return self.async_create_entry(
                 title="",
-                data={CONF_FOLDER_ID: user_input[CONF_FOLDER_ID]},
+                data={
+                    CONF_FOLDER_ID: user_input[CONF_FOLDER_ID],
+                    CONF_SENDER_DOMAINS: user_input[CONF_SENDER_DOMAINS],
+                },
             )
 
         implementation = (
@@ -159,6 +164,9 @@ class ParentSquareOptionsFlow(config_entries.OptionsFlow):
         current_folder = self.config_entry.options.get(
             CONF_FOLDER_ID, "inbox"
         )
+        current_domains = self.config_entry.options.get(
+            CONF_SENDER_DOMAINS, ", ".join(DEFAULT_SENDER_DOMAINS)
+        )
         default_folder = (
             current_folder
             if current_folder in folder_options
@@ -170,7 +178,10 @@ class ParentSquareOptionsFlow(config_entries.OptionsFlow):
                 {
                     vol.Required(
                         CONF_FOLDER_ID, default=default_folder
-                    ): vol.In(folder_options)
+                    ): vol.In(folder_options),
+                    vol.Required(
+                        CONF_SENDER_DOMAINS, default=current_domains
+                    ): str,
                 }
             ),
         )
