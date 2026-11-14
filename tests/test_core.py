@@ -252,3 +252,16 @@ def test_graph_body_endpoint_is_separate_and_explicit() -> None:
     assert body == "Synthetic summary text"
     assert request["params"] == {"$select": "body"}
     assert request["headers"]["Prefer"] == 'outlook.body-content-type="text"'
+
+
+def test_microsoft_scopes_follow_selected_privacy_mode() -> None:
+    from custom_components.parentsquare.const import scopes_for_privacy_mode
+
+    metadata_scopes = scopes_for_privacy_mode("metadata")
+    summary_scopes = scopes_for_privacy_mode("summary")
+    assert "https://graph.microsoft.com/Mail.ReadBasic" in metadata_scopes
+    assert "https://graph.microsoft.com/Mail.Read" not in metadata_scopes
+    assert "https://graph.microsoft.com/Mail.Read" in summary_scopes
+    assert "https://graph.microsoft.com/Mail.ReadBasic" not in summary_scopes
+    assert "offline_access" in metadata_scopes
+    assert "offline_access" in summary_scopes
