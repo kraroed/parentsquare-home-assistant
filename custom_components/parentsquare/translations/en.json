@@ -19,5 +19,19 @@
     "abort": {
       "already_configured": "A Microsoft mailbox is already configured."
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Choose Outlook folder",
+        "description": "Select the folder where your Outlook rule delivers ParentSquare notifications. This is an application-level filter; it does not narrow Microsoft's OAuth permission.",
+        "data": {
+          "folder_id": "Folder to monitor"
+        }
+      }
+    },
+    "abort": {
+      "no_mail_folders": "No Outlook mail folders were returned for this account."
+    }
   }
 }
