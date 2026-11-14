@@ -13,6 +13,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from .const import (
     CONF_FOLDER_ID,
     CONF_PRIVACY_MODE,
+    CONF_SENDER_DOMAINS,
     DEFAULT_MAX_NOTIFICATIONS,
     DEFAULT_RETENTION_DAYS,
     DEFAULT_SCAN_INTERVAL,
@@ -106,7 +107,7 @@ class ParentSquareCoordinator(DataUpdateCoordinator[tuple[NotificationRecord, ..
                 self.source,
                 metadata,
                 privacy_mode=self.privacy_mode,
-                sender_domains=DEFAULT_SENDER_DOMAINS,
+                sender_domains=self._sender_domains(),
             )
             if record is not None:
                 record_map[record.deduplication_key] = record
@@ -120,6 +121,19 @@ class ParentSquareCoordinator(DataUpdateCoordinator[tuple[NotificationRecord, ..
             {"notifications": [self._serialize(record) for record in self._records]}
         )
         return tuple(self._records)
+
+    def _sender_domains(self) -> tuple[str, ...]:
+        """Return the configured sender-domain allow-list."""
+        configured = self.entry.options.get(
+            CONF_SENDER_DOMAINS, DEFAULT_SENDER_DOMAINS
+        )
+        if isinstance(configured, str):
+            return tuple(
+                domain.strip()
+                for domain in configured.split(",")
+                if domain.strip()
+            )
+        return tuple(configured)
 
     @staticmethod
     def _serialize(record: NotificationRecord) -> dict[str, Any]:
