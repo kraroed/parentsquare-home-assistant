@@ -1,7 +1,7 @@
 """Microsoft Graph read-only email adapter."""
 
 from collections.abc import AsyncIterator, Sequence
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 from urllib.parse import quote
 
@@ -106,7 +106,7 @@ class MicrosoftGraphEmailSource:
                 str(received).replace("Z", "+00:00")
             )
             if received_at.tzinfo is None:
-                received_at = received_at.replace(tzinfo=timezone.utc)
+                received_at = received_at.replace(tzinfo=UTC)
         else:
             received_at = datetime.now(timezone.utc)
 
