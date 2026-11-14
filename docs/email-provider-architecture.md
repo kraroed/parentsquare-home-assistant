@@ -73,3 +73,21 @@ Provider adapters emit normalized messages into one provider-neutral classifier.
 - Test OAuth refresh, revoked consent, invalid credentials, pagination, throttling, reconnect, and duplicate delivery.
 - Test HTML/plain text parsing, sender variations, missing fields, ambiguous child association, and retention cleanup.
 - All fixtures are synthetic; logs contain no real email or student data.
+
+## Foundation implementation status (November 2026)
+
+The first provider-neutral code layer now exists under `custom_components/parentsquare/`:
+
+- `models.py` defines normalized metadata, explicit child-match rules, and body-free notification records.
+- `provider.py` defines the read-only email-source adapter contract.
+- `processing.py` enforces the privacy-mode branch: metadata-only processing never calls the body-fetch method; summary mode calls it only after opt-in.
+- `classifier.py` provides explicit sender-domain filtering, conservative child matching, local HTML-to-text extraction, and short summaries.
+- `retention.py` applies age and item-count limits.
+- Synthetic tests cover these behaviors.
+
+This is a development foundation, not a finished Home Assistant integration. There is not yet a config flow, provider authentication, polling coordinator, entity platform, notification service, or live provider adapter.
+
+### Sender filtering limitation
+
+The configured sender-domain list is a classification/filtering rule, not proof that an email was cryptographically sent by ParentSquare. Do not treat a matching sender address alone as authentication. Provider-side message authenticity signals may be evaluated separately where safely available.
+
