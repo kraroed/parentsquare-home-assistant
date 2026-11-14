@@ -79,7 +79,7 @@ def test_notification_record_contains_no_body_field() -> None:
 
 
 def test_retention_prunes_old_and_caps_newest() -> None:
-    now = datetime(2026, 1, 10, tzinfo=timezone.utc)
+    now = datetime(2026, 1, 10, tzinfo=UTC)
     records = [
         NotificationRecord(
             deduplication_key=str(index),
