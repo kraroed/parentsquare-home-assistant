@@ -48,7 +48,9 @@ class MicrosoftGraphEmailSource:
         url = f"{GRAPH_ROOT}/me/mailFolders"
         params = {"$select": "id,displayName", "$top": "100"}
         folders: list[tuple[str, str]] = []
-        while url:
+        for _ in range(MAX_PAGES):
+            if not url:
+                break
             payload = await self._async_get_json(url, params=params)
             params = None
             for folder in payload.get("value", []):
