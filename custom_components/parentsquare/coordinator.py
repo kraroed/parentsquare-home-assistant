@@ -11,13 +11,13 @@ from homeassistant.helpers.storage import Store
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .const import (
+    CONF_FOLDER_ID,
+    CONF_PRIVACY_MODE,
     DEFAULT_MAX_NOTIFICATIONS,
     DEFAULT_RETENTION_DAYS,
     DEFAULT_SCAN_INTERVAL,
     DEFAULT_SENDER_DOMAINS,
     DOMAIN,
-    CONF_FOLDER_ID,
-    CONF_PRIVACY_MODE,
     PRIVACY_METADATA,
 )
 from .models import NotificationRecord
