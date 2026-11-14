@@ -48,7 +48,7 @@ This project does not sign in to ParentSquare, scrape ParentSquare pages, or cal
 8. Yahoo/AOL and iCloud authentication validation.
 9. Proton Bridge interoperability guidance and testing.
 
-See [multi-provider architecture](docs/email-provider-architecture.md) and [Outlook design](docs/outlook-email-architecture.md).
+See [multi-provider architecture](docs/email-provider-architecture.md), [Outlook design](docs/outlook-email-architecture.md), and the [Microsoft personal-account setup guide](docs/microsoft-personal-account-setup.md).
 
 ## Security
 
