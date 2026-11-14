@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from typing import Any
 from urllib.parse import quote
 
-from aiohttp import ClientResponseError, ClientSession
+from aiohttp import ClientSession
 
 from .models import EmailMessageMetadata, PrivacyMode
 
