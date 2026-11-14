@@ -24,10 +24,11 @@
     "step": {
       "init": {
         "title": "Choose Outlook folder",
-        "description": "Select the folder where your Outlook rule delivers ParentSquare notifications. This is an application-level filter; it does not narrow Microsoft's OAuth permission. Configure the sender domains used to filter incoming messages; this is a filtering rule, not sender authentication.",
+        "description": "Select the folder where your Outlook rule delivers ParentSquare notifications. This is an application-level filter; it does not narrow Microsoft's OAuth permission. Configure the sender domains used to filter incoming messages; this is a filtering rule, not sender authentication. Optional child rules use the format Child label: keyword1, keyword2. A message is assigned only when exactly one rule matches; ambiguous messages stay unassigned. In metadata-only mode, matching uses the subject; summary mode can also match the locally extracted short summary.",
         "data": {
           "folder_id": "Folder to monitor",
-          "sender_domains": "Allowed sender domains (comma-separated)"
+          "sender_domains": "Allowed sender domains (comma-separated)",
+          "child_rules": "Child matching rules (one per line)"
         }
       }
     },
