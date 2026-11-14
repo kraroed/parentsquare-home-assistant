@@ -2,8 +2,18 @@
 
 from collections.abc import Sequence
 
-from .classifier import build_notification, make_short_summary, match_child, sender_matches_domains
-from .models import ChildMatchRule, EmailMessageMetadata, NotificationRecord, PrivacyMode
+from .classifier import (
+    build_notification,
+    make_short_summary,
+    match_child,
+    sender_matches_domains,
+)
+from .models import (
+    ChildMatchRule,
+    EmailMessageMetadata,
+    NotificationRecord,
+    PrivacyMode,
+)
 from .provider import EmailSource
 
 
