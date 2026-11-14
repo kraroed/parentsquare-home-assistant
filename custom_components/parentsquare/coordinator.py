@@ -10,7 +10,6 @@ from typing import TYPE_CHECKING, Any
 from homeassistant.helpers.storage import Store
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from .processing import async_process_message
 from .const import (
     DEFAULT_MAX_NOTIFICATIONS,
     DEFAULT_RETENTION_DAYS,
@@ -22,6 +21,7 @@ from .const import (
     PRIVACY_METADATA,
 )
 from .models import NotificationRecord
+from .processing import async_process_message
 from .retention import prune_notifications
 
 if TYPE_CHECKING:
