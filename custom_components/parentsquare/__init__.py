@@ -4,12 +4,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
-from homeassistant.helpers.config_entry_oauth2_flow import (
-    OAuth2Session,
-    async_get_config_entry_implementation,
-)
-
 from .const import DOMAIN
 from .microsoft_graph import MicrosoftGraphEmailSource
 
@@ -28,6 +22,12 @@ async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry
 ) -> bool:
     """Set up an authenticated Microsoft mailbox connection."""
+    from homeassistant.helpers.aiohttp_client import async_get_clientsession
+    from homeassistant.helpers.config_entry_oauth2_flow import (
+        OAuth2Session,
+        async_get_config_entry_implementation,
+    )
+
     implementation = await async_get_config_entry_implementation(hass, entry)
     oauth_session = OAuth2Session(hass, entry, implementation)
     await oauth_session.async_ensure_token_valid()
