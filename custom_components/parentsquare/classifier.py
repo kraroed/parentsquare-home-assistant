@@ -1,8 +1,8 @@
 """ParentSquare email classification and local summary helpers."""
 
+import re
 from collections.abc import Iterable, Sequence
 from html.parser import HTMLParser
-import re
 
 from .const import BODY_MAX_LENGTH, SUMMARY_MAX_LENGTH
 from .models import ChildMatchRule, EmailMessageMetadata, NotificationRecord
