@@ -265,3 +265,27 @@ def test_microsoft_scopes_follow_selected_privacy_mode() -> None:
     assert "https://graph.microsoft.com/Mail.ReadBasic" not in summary_scopes
     assert "offline_access" in metadata_scopes
     assert "offline_access" in summary_scopes
+
+
+def test_child_match_can_use_only_the_locally_extracted_summary() -> None:
+    message = metadata(subject="School update")
+    rules = [
+        ChildMatchRule("child_a", ("Ava",)),
+        ChildMatchRule("child_b", ("Noah",)),
+    ]
+    assert (
+        match_child(
+            message,
+            rules,
+            additional_text="Ava's class will have an early release.",
+        )
+        == "child_a"
+    )
+    assert (
+        match_child(
+            message,
+            rules,
+            additional_text="Ava and Noah both have an early release.",
+        )
+        is None
+    )
