@@ -1,0 +1,23 @@
+{
+  "application_credentials": {
+    "description": "Create an app registration in [Microsoft Entra]({console_url}). Select personal Microsoft accounts, add the Home Assistant OAuth redirect URI shown during setup as a Mobile and desktop application redirect, and leave the client secret blank for this public-client PKCE flow."
+  },
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect Microsoft email",
+        "description": "Choose how much email content Home Assistant may read. Metadata-only requests basic message properties only. Short summaries require the broader Mail.Read permission and retrieve message text locally. Your selected Outlook folder is a query filter, not a Microsoft-enforced permission boundary.",
+        "data": {
+          "privacy_mode": "Email privacy mode"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Reauthorize Microsoft email",
+        "description": "Microsoft authorization has expired or been revoked. Reconnect the account to continue."
+      }
+    },
+    "abort": {
+      "already_configured": "A Microsoft mailbox is already configured."
+    }
+  }
+}
