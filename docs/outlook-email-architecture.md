@@ -81,7 +81,7 @@ Use synthetic .eml or normalized Graph message fixtures only. Include tests for:
 
 ## Implementation status
 
-This document describes the planned Microsoft Graph adapter. The repository does not yet implement Microsoft OAuth, Graph requests, folder discovery, polling, or live mailbox access. The provider-neutral processing layer is in place; Microsoft Graph is the next provider milestone.
+This document describes the planned Microsoft Graph adapter. The repository now includes Microsoft OAuth authorization-code flow with PKCE, Home Assistant Application Credentials, metadata-only versus short-summary scope selection, reauthentication, and an Outlook folder-selection options flow. OAuth has not yet been exercised against a live personal Microsoft account. Polling, persistent notification storage, sensors, and live mailbox validation remain future work.
 
 A configured sender-domain allow-list is a filtering mechanism only. It is not, by itself, proof of sender authenticity.
 
@@ -97,5 +97,14 @@ The repository now includes `custom_components/parentsquare/microsoft_graph.py`,
 - Uses the Home Assistant OAuth session's token-refresh helper before each request.
 - Contains no send, move, delete, or mark-as-read operations.
 
-The adapter's synthetic tests verify the metadata query excludes body/preview fields and that body retrieval is a separate explicit request. Root-folder listing does not yet recurse into nested folders. OAuth flow, folder-selection UI, polling coordinator, entities, and live Microsoft account testing remain future work.
+The adapter's synthetic tests verify the metadata query excludes body/preview fields and that body retrieval is a separate explicit request. Root-folder listing does not yet recurse into nested folders. OAuth and folder-selection code are now present, but have not been validated against a live Microsoft account. Polling coordinator, persistent notification storage, and entities remain future work.
 
+
+
+## OAuth setup implementation
+
+The config flow asks for the privacy mode before redirecting to Microsoft. Metadata-only requests delegated `Mail.ReadBasic`; optional short-summary mode requests delegated `Mail.Read`. Both request `offline_access` for refresh tokens. The flow uses Home Assistant's Application Credentials integration and authorization-code PKCE as a public client. It does not ask for a Microsoft password or client secret.
+
+The integration supports one Microsoft mailbox entry. After linking, open the integration's options to select the Outlook folder that receives ParentSquare notification emails. The selected folder is a query filter, not a Microsoft permission boundary.
+
+Before publishing installation instructions, the OAuth callback and app-registration platform settings must be verified end-to-end with a real consumer Microsoft account. The current implementation has not yet passed that live test.
