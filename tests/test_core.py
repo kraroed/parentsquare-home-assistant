@@ -1,8 +1,7 @@
 """Tests for provider-neutral ParentSquare processing."""
 
+import asyncio
 from datetime import datetime, timedelta, timezone
-
-import pytest
 
 from custom_components.parentsquare.classifier import (
     build_notification,
@@ -117,44 +116,40 @@ class FakeSource:
         return self.body
 
 
-@pytest.mark.asyncio
-async def test_metadata_mode_never_fetches_message_body() -> None:
+def test_metadata_mode_never_fetches_message_body() -> None:
     source = FakeSource()
-    record = await async_process_message(
+    record = asyncio.run(async_process_message(
         source,
         metadata(),
         privacy_mode="metadata",
         sender_domains=["parentsquare.com"],
-    )
+    ))
     assert record is not None
     assert record.summary == "Reminder for Field Trip"
     assert source.body_fetches == 0
 
 
-@pytest.mark.asyncio
-async def test_summary_mode_fetches_body_but_does_not_retain_it() -> None:
+def test_summary_mode_fetches_body_but_does_not_retain_it() -> None:
     source = FakeSource("The school concert begins at 6 PM. Please arrive early.")
-    record = await async_process_message(
+    record = asyncio.run(async_process_message(
         source,
         metadata(),
         privacy_mode="summary",
         sender_domains=["parentsquare.com"],
-    )
+    ))
     assert record is not None
     assert record.summary == "The school concert begins at 6 PM."
     assert source.body_fetches == 1
-    assert "school concert" not in repr(record.__dict__) if hasattr(record, "__dict__") else True
     assert not hasattr(record, "body")
 
 
-@pytest.mark.asyncio
-async def test_unapproved_sender_is_ignored_without_body_fetch() -> None:
+def test_unapproved_sender_is_ignored_without_body_fetch() -> None:
     source = FakeSource()
-    record = await async_process_message(
+    record = asyncio.run(async_process_message(
         source,
         metadata(sender_address="someone@example.test"),
         privacy_mode="summary",
         sender_domains=["parentsquare.com"],
-    )
+    ))
     assert record is None
     assert source.body_fetches == 0
