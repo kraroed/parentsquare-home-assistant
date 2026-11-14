@@ -11,6 +11,7 @@ from homeassistant.helpers.storage import Store
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .const import (
+    CONF_CHILD_RULES,
     CONF_FOLDER_ID,
     CONF_PRIVACY_MODE,
     CONF_SENDER_DOMAINS,
@@ -21,7 +22,7 @@ from .const import (
     DOMAIN,
     PRIVACY_METADATA,
 )
-from .models import NotificationRecord
+from .models import ChildMatchRule, NotificationRecord
 from .processing import async_process_message
 from .retention import prune_notifications
 
@@ -108,6 +109,7 @@ class ParentSquareCoordinator(DataUpdateCoordinator[tuple[NotificationRecord, ..
                 metadata,
                 privacy_mode=self.privacy_mode,
                 sender_domains=self._sender_domains(),
+                child_rules=self.child_rules,
             )
             if record is not None:
                 record_map[record.deduplication_key] = record
@@ -121,6 +123,27 @@ class ParentSquareCoordinator(DataUpdateCoordinator[tuple[NotificationRecord, ..
             {"notifications": [self._serialize(record) for record in self._records]}
         )
         return tuple(self._records)
+
+    @property
+    def child_rules(self) -> tuple[ChildMatchRule, ...]:
+        """Parse explicit child labels and matching terms from options."""
+        raw_rules = self.entry.options.get(CONF_CHILD_RULES, "")
+        if not isinstance(raw_rules, str):
+            return ()
+
+        rules: list[ChildMatchRule] = []
+        for line in raw_rules.splitlines():
+            if ":" not in line:
+                continue
+            child_id, raw_terms = line.split(":", 1)
+            terms = tuple(
+                term.strip()
+                for term in raw_terms.split(",")
+                if term.strip()
+            )
+            if child_id.strip() and terms:
+                rules.append(ChildMatchRule(child_id.strip(), terms))
+        return tuple(rules)
 
     def _sender_domains(self) -> tuple[str, ...]:
         """Return the configured sender-domain allow-list."""
