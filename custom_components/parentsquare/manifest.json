@@ -4,13 +4,13 @@
   "codeowners": [
     "@kraroed"
   ],
+  "config_flow": true,
+  "dependencies": [
+    "application_credentials"
+  ],
   "documentation": "https://github.com/kraroed/parentsquare-home-assistant",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/kraroed/parentsquare-home-assistant/issues",
   "requirements": [],
-  "version": "0.1.0",
-  "config_flow": true,
-  "dependencies": [
-    "application_credentials"
-  ]
+  "version": "0.1.0"
 }
