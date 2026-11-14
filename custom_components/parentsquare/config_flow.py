@@ -13,6 +13,7 @@ from homeassistant.helpers import config_entry_oauth2_flow
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .const import (
+    CONF_CHILD_RULES,
     CONF_FOLDER_ID,
     CONF_PRIVACY_MODE,
     CONF_SENDER_DOMAINS,
@@ -141,6 +142,7 @@ class ParentSquareOptionsFlow(config_entries.OptionsFlow):
                 data={
                     CONF_FOLDER_ID: user_input[CONF_FOLDER_ID],
                     CONF_SENDER_DOMAINS: user_input[CONF_SENDER_DOMAINS],
+                    CONF_CHILD_RULES: user_input[CONF_CHILD_RULES],
                 },
             )
 
@@ -167,6 +169,9 @@ class ParentSquareOptionsFlow(config_entries.OptionsFlow):
         current_domains = self.config_entry.options.get(
             CONF_SENDER_DOMAINS, ", ".join(DEFAULT_SENDER_DOMAINS)
         )
+        current_child_rules = self.config_entry.options.get(
+            CONF_CHILD_RULES, ""
+        )
         default_folder = (
             current_folder
             if current_folder in folder_options
@@ -181,6 +186,9 @@ class ParentSquareOptionsFlow(config_entries.OptionsFlow):
                     ): vol.In(folder_options),
                     vol.Required(
                         CONF_SENDER_DOMAINS, default=current_domains
+                    ): str,
+                    vol.Optional(
+                        CONF_CHILD_RULES, default=current_child_rules
                     ): str,
                 }
             ),
