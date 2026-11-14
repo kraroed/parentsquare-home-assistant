@@ -62,7 +62,7 @@ This project is independent and is not affiliated with, endorsed by, or sponsore
 ## Intended capabilities
 
 - Connect to common personal email providers through provider-specific, read-only adapters.
-- Initial provider targets: Gmail, Outlook.com/Hotmail/Live.com, Yahoo/AOL, iCloud Mail, and generic IMAP-compatible providers (including Fastmail, Zoho, GMX, and Proton Mail Bridge where supported).
+- Initial provider targets: Gmail, Outlook.com/Hotmail/Live.com, Yahoo Mail, iCloud Mail, and Proton Mail (through Proton Mail Bridge where supported). A generic IMAP option will additionally cover Fastmail, Zoho, GMX, AOL where supported, and ISP/custom-domain mailboxes.
 - Monitor a user-selected label or folder for ParentSquare notification emails.
 - Identify school, sender, date, subject, and child association where the email provides enough information.
 - Show concise notification summaries in Home Assistant.
