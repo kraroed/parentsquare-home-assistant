@@ -8,14 +8,16 @@ from typing import Any
 
 import voluptuous as vol
 
+from homeassistant import config_entries
 from homeassistant.config_entries import SOURCE_REAUTH, ConfigFlowResult
 from homeassistant.helpers import config_entry_oauth2_flow
 
 from .const import (
+    CONF_FOLDER_ID,
+    CONF_PRIVACY_MODE,
     DOMAIN,
     PRIVACY_METADATA,
     PRIVACY_SUMMARY,
-    CONF_PRIVACY_MODE,
     scopes_for_privacy_mode,
 )
 
@@ -95,6 +97,11 @@ class ParentSquareConfigFlow(
             return self.async_show_form(step_id="reauth_confirm")
         return await self.async_step_user()
 
+    @staticmethod
+    def async_get_options_flow(config_entry):
+        """Return the mailbox folder options flow."""
+        return ParentSquareOptionsFlow(config_entry)
+
     async def async_oauth_create_entry(
         self, data: dict[str, Any]
     ) -> ConfigFlowResult:
@@ -111,4 +118,61 @@ class ParentSquareConfigFlow(
         self._abort_if_unique_id_configured()
         return self.async_create_entry(
             title="Outlook.com (Microsoft)", data=data
+        )
+
+
+
+class ParentSquareOptionsFlow(config_entries.OptionsFlow):
+    """Select the Outlook folder to monitor."""
+
+    def __init__(self, config_entry) -> None:
+        """Initialize options."""
+        self.config_entry = config_entry
+
+    async def async_step_init(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Load available folders and save the selected folder."""
+        if user_input is not None:
+            return self.async_create_entry(
+                title="",
+                data={CONF_FOLDER_ID: user_input[CONF_FOLDER_ID]},
+            )
+
+        implementation = (
+            await config_entry_oauth2_flow.async_get_config_entry_implementation(
+                self.hass, self.config_entry
+            )
+        )
+        oauth_session = config_entry_oauth2_flow.OAuth2Session(
+            self.hass, self.config_entry, implementation
+        )
+        from homeassistant.helpers.aiohttp_client import async_get_clientsession
+
+        from .microsoft_graph import MicrosoftGraphEmailSource
+
+        source = MicrosoftGraphEmailSource(
+            oauth_session, async_get_clientsession(self.hass)
+        )
+        folders = await source.async_list_folders()
+        folder_options = {folder_id: name for folder_id, name in folders}
+
+        if not folder_options:
+            return self.async_abort(reason="no_mail_folders")
+
+        current_folder = self.config_entry.options.get(
+            CONF_FOLDER_ID, "inbox"
+        )
+        default_folder = (
+            current_folder if current_folder in folder_options else next(iter(folder_options))
+        )
+        return self.async_show_form(
+            step_id="init",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(
+                        CONF_FOLDER_ID, default=default_folder
+                    ): vol.In(folder_options)
+                }
+            ),
         )
