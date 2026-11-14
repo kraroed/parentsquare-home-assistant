@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Any
 from homeassistant.helpers.storage import Store
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from .classifier import async_process_message
+from .processing import async_process_message
 from .const import (
     DEFAULT_MAX_NOTIFICATIONS,
     DEFAULT_RETENTION_DAYS,
