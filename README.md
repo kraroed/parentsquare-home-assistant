@@ -2,7 +2,7 @@
 
 An independent Home Assistant integration that tracks ParentSquare notification emails delivered to a user's own mailbox.
 
-> **Development status: Microsoft OAuth and folder selection are implemented; polling and entities are not.** The repository includes the provider-neutral processing layer, a tested read-only Graph adapter, a Home Assistant OAuth flow with PKCE, privacy-based permission selection, and an Outlook folder options flow. Live Microsoft account validation, background polling, and sensors remain outstanding.
+> **Development status: first end-to-end integration code is implemented; live mailbox validation remains.** The repository includes provider-neutral processing, a read-only Microsoft Graph adapter, Home Assistant OAuth with PKCE, privacy-based permission selection, Outlook folder and sender filtering, local summary processing, bounded persistence, and unread/latest/per-child sensors. The current test suite is synthetic; it has not yet been connected to a live Microsoft account.
 
 ## Goals
 
