@@ -11,7 +11,9 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.config_entries import SOURCE_REAUTH, ConfigFlowResult
 from homeassistant.helpers import config_entry_oauth2_flow
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
+from .microsoft_graph import MicrosoftGraphEmailSource
 from .const import (
     CONF_FOLDER_ID,
     CONF_PRIVACY_MODE,
@@ -121,7 +123,6 @@ class ParentSquareConfigFlow(
         )
 
 
-
 class ParentSquareOptionsFlow(config_entries.OptionsFlow):
     """Select the Outlook folder to monitor."""
 
@@ -147,10 +148,6 @@ class ParentSquareOptionsFlow(config_entries.OptionsFlow):
         oauth_session = config_entry_oauth2_flow.OAuth2Session(
             self.hass, self.config_entry, implementation
         )
-        from homeassistant.helpers.aiohttp_client import async_get_clientsession
-
-        from .microsoft_graph import MicrosoftGraphEmailSource
-
         source = MicrosoftGraphEmailSource(
             oauth_session, async_get_clientsession(self.hass)
         )
@@ -164,7 +161,9 @@ class ParentSquareOptionsFlow(config_entries.OptionsFlow):
             CONF_FOLDER_ID, "inbox"
         )
         default_folder = (
-            current_folder if current_folder in folder_options else next(iter(folder_options))
+            current_folder
+            if current_folder in folder_options
+            else next(iter(folder_options))
         )
         return self.async_show_form(
             step_id="init",
