@@ -10,6 +10,7 @@ from custom_components.parentsquare.classifier import (
     match_child,
     sender_matches_domains,
 )
+from custom_components.parentsquare.microsoft_graph import MicrosoftGraphEmailSource
 from custom_components.parentsquare.models import (
     ChildMatchRule,
     EmailMessageMetadata,
@@ -155,3 +156,99 @@ def test_unapproved_sender_is_ignored_without_body_fetch() -> None:
     ))
     assert record is None
     assert source.body_fetches == 0
+
+
+
+class FakeResponse:
+    """Async context-manager response for Graph adapter tests."""
+
+    def __init__(self, payload: dict[str, object]) -> None:
+        self.payload = payload
+
+    async def __aenter__(self) -> "FakeResponse":
+        return self
+
+    async def __aexit__(self, *args: object) -> None:
+        return None
+
+    def raise_for_status(self) -> None:
+        return None
+
+    async def json(self) -> dict[str, object]:
+        return self.payload
+
+
+class FakeOAuthSession:
+    """OAuth fixture with a synthetic access token."""
+
+    token = {"access_token": "synthetic-token"}
+
+    async def async_ensure_token_valid(self) -> None:
+        return None
+
+
+class FakeWebSession:
+    """Capture Graph requests and return a synthetic payload."""
+
+    def __init__(self, payload: dict[str, object]) -> None:
+        self.payload = payload
+        self.requests: list[dict[str, object]] = []
+
+    def get(self, url: str, **kwargs: object) -> FakeResponse:
+        self.requests.append({"url": url, **kwargs})
+        return FakeResponse(self.payload)
+
+
+def test_graph_metadata_request_does_not_select_body_or_preview() -> None:
+    async def run() -> list[EmailMessageMetadata]:
+        websession = FakeWebSession(
+            {
+                "value": [
+                    {
+                        "id": "graph-message-1",
+                        "subject": "Synthetic school notice",
+                        "from": {
+                            "emailAddress": {
+                                "name": "School Office",
+                                "address": "notices@parentsquare.com",
+                            }
+                        },
+                        "receivedDateTime": "2026-11-13T10:00:00Z",
+                        "isRead": False,
+                        "internetMessageId": "<synthetic-1@example.test>",
+                    }
+                ]
+            }
+        )
+        source = MicrosoftGraphEmailSource(FakeOAuthSession(), websession)
+        messages = [
+            message
+            async for message in source.async_get_messages(
+                "folder/id", privacy_mode="metadata"
+            )
+        ]
+        selected = websession.requests[0]["params"]["$select"]
+        assert "body" not in selected.casefold()
+        assert "preview" not in selected.casefold()
+        assert websession.requests[0]["url"].endswith("/folder%2Fid/messages")
+        return messages
+
+    messages = asyncio.run(run())
+    assert len(messages) == 1
+    assert messages[0].message_id == "graph-message-1"
+    assert messages[0].sender_address == "notices@parentsquare.com"
+
+
+def test_graph_body_endpoint_is_separate_and_explicit() -> None:
+    async def run() -> tuple[str, dict[str, object]]:
+        websession = FakeWebSession(
+            {"body": {"contentType": "text", "content": "Synthetic summary text"}}
+        )
+        source = MicrosoftGraphEmailSource(FakeOAuthSession(), websession)
+        body = await source.async_get_text_body("message-1")
+        return body, websession.requests[0]
+
+    body, request = asyncio.run(run())
+    assert body == "Synthetic summary text"
+    assert request["params"] == {"$select": "body"}
+    assert request["headers"]["Prefer"] == 'outlook.body-content-type="text"'
