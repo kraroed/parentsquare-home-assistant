@@ -2,7 +2,7 @@
 
 An independent Home Assistant integration that tracks ParentSquare notification emails delivered to a user's own mailbox.
 
-> **Development status: foundation in progress.** The repository includes the multi-provider design and the first provider-neutral processing layer. It is not yet ready to install or connect to an email account. Microsoft Graph / Live.com is the first planned live provider.
+> **Development status: provider foundation and Microsoft Graph adapter in progress.** The repository includes the provider-neutral processing layer and a tested, read-only Graph adapter. OAuth setup, polling, Home Assistant entities, and live mailbox validation are not complete; the integration is not yet ready to install.
 
 ## Goals
 
@@ -38,12 +38,13 @@ This project does not sign in to ParentSquare, scrape ParentSquare pages, or cal
 
 ## Development plan
 
-1. Provider-neutral models, classification, child matching, retention, and synthetic tests.
-2. Microsoft Graph for personal Outlook.com / Hotmail / Live.com accounts.
-3. Gmail API.
-4. Generic IMAP and validated provider presets.
-5. Yahoo/AOL and iCloud authentication validation.
-6. Proton Bridge interoperability guidance and testing.
+1. Provider-neutral models, classification, child matching, retention, and synthetic tests. (Implemented.)
+2. Microsoft Graph read-only adapter and synthetic API tests. (Implemented; OAuth and live integration remain.)
+3. Complete Microsoft OAuth, folder selection, polling coordinator, and Home Assistant entities.
+4. Gmail API.
+5. Generic IMAP and validated provider presets.
+6. Yahoo/AOL and iCloud authentication validation.
+7. Proton Bridge interoperability guidance and testing.
 
 See [multi-provider architecture](docs/email-provider-architecture.md) and [Outlook design](docs/outlook-email-architecture.md).
 
