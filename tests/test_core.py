@@ -2,7 +2,7 @@
 
 import asyncio
 from collections.abc import AsyncIterator
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from custom_components.parentsquare.classifier import (
     build_notification,
@@ -26,7 +26,7 @@ def metadata(**overrides: object) -> EmailMessageMetadata:
         "message_id": "message-1",
         "sender_address": "notices@school.parentsquare.com",
         "subject": "Reminder for Field Trip",
-        "received_at": datetime(2026, 1, 2, tzinfo=timezone.utc),
+        "received_at": datetime(2026, 1, 2, tzinfo=UTC),
         "is_read": False,
     }
     values.update(overrides)
