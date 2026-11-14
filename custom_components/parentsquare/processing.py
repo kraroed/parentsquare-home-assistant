@@ -40,7 +40,9 @@ async def async_process_message(
         body = await source.async_get_text_body(metadata.message_id)
 
     summary = make_short_summary(metadata.subject, body)
-    child_id = match_child(metadata, child_rules)
+    child_id = match_child(
+        metadata, child_rules, additional_text=summary
+    )
     record = build_notification(metadata, summary=summary, child_id=child_id)
     del body
     return record
