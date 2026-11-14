@@ -13,7 +13,6 @@ from homeassistant.config_entries import SOURCE_REAUTH, ConfigFlowResult
 from homeassistant.helpers import config_entry_oauth2_flow
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-from .microsoft_graph import MicrosoftGraphEmailSource
 from .const import (
     CONF_FOLDER_ID,
     CONF_PRIVACY_MODE,
@@ -22,6 +21,7 @@ from .const import (
     PRIVACY_SUMMARY,
     scopes_for_privacy_mode,
 )
+from .microsoft_graph import MicrosoftGraphEmailSource
 
 _LOGGER = logging.getLogger(__name__)
 
