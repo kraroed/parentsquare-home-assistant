@@ -1,6 +1,6 @@
 {
   "application_credentials": {
-    "description": "Create an app registration in [Microsoft Entra]({console_url}). Select personal Microsoft accounts, add the Home Assistant OAuth redirect URI shown during setup as a Mobile and desktop application redirect, and leave the client secret blank for this public-client PKCE flow."
+    "description": "Create an app registration in [Microsoft Entra]({console_url}) for personal Microsoft accounts. Add this exact redirect URI under the Mobile and desktop applications platform: `{redirect_uri}`. Use authorization code with PKCE and leave the client secret blank."
   },
   "config": {
     "step": {
